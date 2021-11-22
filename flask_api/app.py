@@ -1,28 +1,76 @@
 from flask import Flask, jsonify, request
-from db import get_merchants, get_merchant_by_id, update_merchant, insert_merchant, delete_merchant
+from flask_sqlalchemy import SQLAlchemy
+from flask_marshmallow import Marshmallow
+from flask_restful import Api, Resource
+# from db import get_merchants, get_merchant_by_id, update_merchant, insert_merchant, delete_merchant
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+db = SQLAlchemy(app)
+api = Api(app)
+ma = Marshmallow(app)
 
-@app.route('/merchants/', methods=['POST'])
-def add_merchant():
-    merchant = request.get_json()
-    return jsonify(insert_merchant(merchant))
 
-@app.route('/merchants/<int:index>', methods=['PUT'])
-def update_merchant(index):
-    return {"merchant": "updated", "id": index}, 200
+# models
+class Merchant(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50))
+    description  = db.Column(db.String(255))
 
-@app.route('/merchants/<int:index>', methods=['DELETE'])
-def delete_one_merchant(index):
-    return jsonify(delete_merchant(index))
+    def __repr__(self):
+        return f'Merchant Name: {self.name}'
 
-@app.route('/', methods=['GET'])
-def all_merchants():
-    return jsonify(get_merchants())
+# schema
+class MerchantSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'name', 'description')
+        model = Merchant
 
-@app.route('/merchants/<int:index>', methods=['GET'])
-def get_one_merchant(index):
-    print("the index", index)
-    return jsonify(get_merchant_by_id(index))
+merchant_schema = MerchantSchema()
+merchants_schema = MerchantSchema(many=True)
+
+
+
+# resources
+
+class MerchantListResource(Resource):
+    def get(self):
+        merchants = Merchant.query.all()
+        return merchants_schema.dump(merchants)
+
+    def post(self):
+        new_merchant = Merchant(
+                name=request.json['name'],
+                description = request.json['description']
+        )
+        db.session.add(new_merchant)
+        db.session.commit()
+        return merchant_schema.dump(new_merchant)
+
+api.add_resource(MerchantListResource, '/merchants/')
+
+class MerchantResource(Resource):
+
+    def get(self, merchant_id):
+        merchant = Merchant.query.get_or_404(merchant_id)
+        return merchant_schema.dump(merchant)
+
+    def patch(self, merchant_id):
+        merchant = Merchant.query.get_or_404(merchant_id)
+
+        if 'name' in request.json:
+            merchant.name = request.json['name']
+        if 'description' in request.json:
+            merchant.description = request.json['description']
+        db.session.commit()
+        return merchant_schema.dump(merchant)
+
+    def delete(self, merchant_id):
+        merchant = Merchant.query.get_or_404(merchant_id)
+        db.session.delete(merchant)
+        db.session.commit()
+        return '', 204
+
+api.add_resource(MerchantResource, '/merchants/<int:merchant_id>')
 
 
 app.run()
