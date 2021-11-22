@@ -2,7 +2,8 @@ from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_restful import Api, Resource
-# from db import get_merchants, get_merchant_by_id, update_merchant, insert_merchant, delete_merchant
+from datetime import datetime
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 db = SQLAlchemy(app)
@@ -13,11 +14,31 @@ ma = Marshmallow(app)
 # models
 class Merchant(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50))
+    name = db.Column(db.String(50), nullable=False)
     description  = db.Column(db.String(255))
 
     def __repr__(self):
         return f'Merchant Name: {self.name}'
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
+    dob = db.Column(db.String(16))
+
+    def __repr__(self):
+        return f'User Name: {self.first_name} {self.last_name}'
+
+class Transaction(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String(50), nullable=False)
+    amount = db.Column(db.Integer, nullable=False)
+    credit = db.Column(db.Boolean)
+    debit  = db.Column(db.Boolean)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship("User", backref=db.backref('transactions', lazy=True))
+    merchant_id = db.Column(db.Integer, db.ForeignKey('merchant.id'), nullable=False)
+    merchant = db.relationship("Merchant", backref=db.backref('transactions', lazy=True))
 
 # schema
 class MerchantSchema(ma.Schema):
@@ -73,4 +94,4 @@ class MerchantResource(Resource):
 api.add_resource(MerchantResource, '/merchants/<int:merchant_id>')
 
 
-app.run()
+# app.run()
