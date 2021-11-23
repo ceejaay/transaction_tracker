@@ -12,7 +12,7 @@ ma = Marshmallow(app)
 
 
 # models
-class Transaction(db.Model):
+class Transctions(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(50), nullable=False)
     amount = db.Column(db.Integer, nullable=False)
