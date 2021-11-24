@@ -157,7 +157,7 @@ class TransactionResource(Resource):
 
     def post(self, user_id, merchant_id):
         try:
-            merchant = Merchant.query.get(merchant_id)
+            merchant = Merchant.query.get_or_404(merchant_id)
             user = User.query.get_or_404(user_id)
         except:
             return "User or Merchant not found", 404
