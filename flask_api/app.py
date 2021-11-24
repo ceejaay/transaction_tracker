@@ -12,6 +12,20 @@ ma = Marshmallow(app)
 
 
 # models
+class Transactions(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String(50), nullable=False)
+    amount = db.Column(db.Integer, nullable=False)
+    credit = db.Column(db.Boolean)
+    debit  = db.Column(db.Boolean)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship("User", backref=db.backref('transactions', lazy=True))
+    merchant_id = db.Column(db.Integer, db.ForeignKey('merchant.id'), nullable=False)
+    merchant = db.relationship("Merchant", backref=db.backref('transactions', lazy=True))
+
+    def __repr__(self):
+        return f'Transaction: {self.description}'
+
 class Merchant(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
@@ -29,16 +43,6 @@ class User(db.Model):
     def __repr__(self):
         return f'User Name: {self.first_name} {self.last_name}'
 
-class Transaction(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    description = db.Column(db.String(50), nullable=False)
-    amount = db.Column(db.Integer, nullable=False)
-    credit = db.Column(db.Boolean)
-    debit  = db.Column(db.Boolean)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    user = db.relationship("User", backref=db.backref('transactions', lazy=True))
-    merchant_id = db.Column(db.Integer, db.ForeignKey('merchant.id'), nullable=False)
-    merchant = db.relationship("Merchant", backref=db.backref('transactions', lazy=True))
 
 # schema
 class MerchantSchema(ma.Schema):
@@ -49,9 +53,30 @@ class MerchantSchema(ma.Schema):
 merchant_schema = MerchantSchema()
 merchants_schema = MerchantSchema(many=True)
 
+class UserSchema(ma.Schema):
+    class Meta:
+        fields = ("id", "first_name", "last_name", "dob")
 
+user_schema = UserSchema()
+users_schema = UserSchema(many=True)
+
+class TransactionSchema(ma.Schema):
+    class Meta:
+        fields = (
+                "id",
+                "description",
+                "amount",
+                "credit",
+                "debit",
+                "user_id",
+                "merchant_id",
+                )
+
+transaction_schema = TransactionSchema()
+transactions_schema = TransactionSchema(many=True)
 
 # resources
+
 
 class MerchantListResource(Resource):
     def get(self):
@@ -93,5 +118,53 @@ class MerchantResource(Resource):
 
 api.add_resource(MerchantResource, '/merchants/<int:merchant_id>')
 
+class UserListResource(Resource):
+    def get(self):
+        users = User.query.all()
+        return users_schema.dump(users)
 
-# app.run()
+    def post(self):
+        new_user = User(
+                first_name=request.json['first_name'],
+                last_name=request.json['last_name'],
+                dob=request.json['dob'],
+                )
+        db.session.add(new_user)
+        db.session.commit()
+        return user_schema.dump(new_user)
+
+api.add_resource(UserListResource, '/users/')
+
+class UserResource(Resource):
+
+    def get(self, user_id):
+        user = User.query.get_or_404(user_id)
+        m = Merchant.query.get_or_404(1)
+        print(m)
+        return user_schema.dump(user)
+
+api.add_resource(UserResource, "/users/<int:user_id>")
+
+class TransactionListResource(Resource):
+
+    def get(self):
+        transactions = Transactions.query.all()
+        return transactions_schema.dump(transactions)
+
+    def post(self):
+        # print("request right hhere: ******************", request)
+        new_transaction = Transactions(
+                description=request.json['description'],
+                amount=request.json['amount'],
+                credit=request.json['credit'],
+                debit=request.json['debit'],
+                user_id=request.json['user_id'],
+                merchant_id=request.json['merchant_id']
+                )
+        db.session.add(new_transaction)
+        db.session.commit()
+        return transaction_schema.dump(new_transaction)
+
+
+api.add_resource(TransactionListResource, "/transactions/")
+app.run()
