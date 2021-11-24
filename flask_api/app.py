@@ -18,6 +18,10 @@ class Transactions(db.Model):
     amount = db.Column(db.Integer, nullable=False)
     credit = db.Column(db.Boolean)
     debit  = db.Column(db.Boolean)
+    timestamp = db.Column(db.DateTime)
+
+    # relashionships
+
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship("User", backref=db.backref('transactions', lazy=True))
     merchant_id = db.Column(db.Integer, db.ForeignKey('merchant.id'), nullable=False)
@@ -30,6 +34,7 @@ class Merchant(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     description  = db.Column(db.String(255))
+    timestamp = db.Column(db.DateTime)
 
     def __repr__(self):
         return f'Merchant Name: {self.name}'
@@ -39,6 +44,7 @@ class User(db.Model):
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
     dob = db.Column(db.String(16))
+    timestamp = db.Column(db.DateTime)
 
     def __repr__(self):
         return f'User Name: {self.first_name} {self.last_name}'
@@ -86,7 +92,8 @@ class MerchantListResource(Resource):
     def post(self):
         new_merchant = Merchant(
                 name=request.json['name'],
-                description = request.json['description']
+                description = request.json['description'],
+                timestamp  = datetime.now()
         )
         db.session.add(new_merchant)
         db.session.commit()
@@ -128,6 +135,7 @@ class UserListResource(Resource):
                 first_name=request.json['first_name'],
                 last_name=request.json['last_name'],
                 dob=request.json['dob'],
+                timestamp  = datetime.now()
                 )
         db.session.add(new_user)
         db.session.commit()
@@ -168,8 +176,9 @@ class TransactionResource(Resource):
                 credit=request.json['credit'],
                 debit=request.json['debit'],
                 user_id=user_id,
-                merchant_id=merchant.id
-                )
+                merchant_id=merchant.id,
+                timestamp = datetime.now()                )
+
         db.session.add(new_transaction)
         db.session.commit()
         return transaction_schema.dump(new_transaction)
