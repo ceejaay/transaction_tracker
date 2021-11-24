@@ -12,7 +12,7 @@ ma = Marshmallow(app)
 
 
 # models
-class Transctions(db.Model):
+class Transactions(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(50), nullable=False)
     amount = db.Column(db.Integer, nullable=False)
@@ -69,9 +69,7 @@ class TransactionSchema(ma.Schema):
                 "credit",
                 "debit",
                 "user_id",
-                "user",
                 "merchant_id",
-                "merchant"
                 )
 
 transaction_schema = TransactionSchema()
@@ -150,18 +148,23 @@ api.add_resource(UserResource, "/users/<int:user_id>")
 class TransactionListResource(Resource):
 
     def get(self):
-        transactions = Transaction.query.all()
+        transactions = Transactions.query.all()
         return transactions_schema.dump(transactions)
 
     def post(self):
-        return 200
-        # new_transaction = Transaction(
-        #         description=request.json['description'],
-        #         amount=request.json['amount'],
-        #         credit=request.json['credit'],
-        #         debit=request.json['debit'],
-        #         user=request.json['user'],
-        #         )
+        # print("request right hhere: ******************", request)
+        new_transaction = Transactions(
+                description=request.json['description'],
+                amount=request.json['amount'],
+                credit=request.json['credit'],
+                debit=request.json['debit'],
+                user_id=request.json['user_id'],
+                merchant_id=request.json['merchant_id']
+                )
+        db.session.add(new_transaction)
+        db.session.commit()
+        return transaction_schema.dump(new_transaction)
+
 
 api.add_resource(TransactionListResource, "/transactions/")
-# app.run()
+app.run()
