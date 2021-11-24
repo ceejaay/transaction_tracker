@@ -156,10 +156,10 @@ api.add_resource(TransactionListResource, "/transactions/")
 class TransactionResource(Resource):
 
     def post(self, user_id, merchant_id):
-        try:
-            merchant = Merchant.query.get_or_404(merchant_id)
-            user = User.query.get_or_404(user_id)
-        except:
+        merchant = Merchant.query.get(merchant_id)
+        user = User.query.get(merchant_id)
+
+        if merchant == None or user == None:
             return "User or Merchant not found", 404
 
         new_transaction = Transactions(
@@ -167,7 +167,7 @@ class TransactionResource(Resource):
                 amount=request.json['amount'],
                 credit=request.json['credit'],
                 debit=request.json['debit'],
-                user_id=user.id,
+                user_id=user_id,
                 merchant_id=merchant.id
                 )
         db.session.add(new_transaction)
