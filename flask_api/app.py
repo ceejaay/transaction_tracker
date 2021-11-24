@@ -151,20 +151,28 @@ class TransactionListResource(Resource):
         transactions = Transactions.query.all()
         return transactions_schema.dump(transactions)
 
-    def post(self):
-        # print("request right hhere: ******************", request)
+api.add_resource(TransactionListResource, "/transactions/")
+
+class TransactionResource(Resource):
+
+    def post(self, user_id, merchant_id):
+        merchant = Merchant.query.get(merchant_id)
+        user = User.query.get(merchant_id)
+
+        if merchant == None or user == None:
+            return "User or Merchant not found", 404
+
         new_transaction = Transactions(
                 description=request.json['description'],
                 amount=request.json['amount'],
                 credit=request.json['credit'],
                 debit=request.json['debit'],
-                user_id=request.json['user_id'],
-                merchant_id=request.json['merchant_id']
+                user_id=user_id,
+                merchant_id=merchant.id
                 )
         db.session.add(new_transaction)
         db.session.commit()
         return transaction_schema.dump(new_transaction)
 
-
-api.add_resource(TransactionListResource, "/transactions/")
+api.add_resource(TransactionResource, '/transactions/users/<int:user_id>/merchants/<int:merchant_id>')
 app.run()
