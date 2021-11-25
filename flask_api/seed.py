@@ -1,4 +1,5 @@
 import uuid
+import random
 from datetime import datetime
 import pytz
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, Boolean, ForeignKey
@@ -82,7 +83,7 @@ for entry in range (1, 10):
     for purchase in range(1, 5):
         purchase = Transactions(
                 id=uuid.uuid1(),
-                amount=3.90,
+                amount=random.randrange(1, 1000),
                 credit=False,
                 debit=True,
                 description=faker.sentence(nb_words=5),
