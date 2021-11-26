@@ -9,7 +9,6 @@ from faker import Faker
 
 
 faker = Faker()
-
 DATABASE_URI = 'sqlite:///test.db'
 Base = declarative_base()
 
@@ -24,8 +23,8 @@ class User(Base):
     first_name = Column(String)
     last_name = Column(String)
     dob = Column(String)
-    inserted_at=Column(DateTime, nullable=False)
-    updated_at=Column(DateTime, nullable=False)
+    inserted_at=Column(DateTime)
+    updated_at=Column(DateTime)
     transaction = relationship("Transactions", back_populates="user", uselist=False)
 
 class Merchant(Base):
@@ -33,8 +32,8 @@ class Merchant(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
     description = Column(String)
-    inserted_at=Column(DateTime, nullable=False)
-    updated_at=Column(DateTime, nullable=False)
+    inserted_at=Column(DateTime)
+    updated_at=Column(DateTime)
     transaction = relationship("Transactions", back_populates="merchant", uselist=False)
 
 class Transactions(Base):
@@ -48,8 +47,8 @@ class Transactions(Base):
     user = relationship("User", back_populates="transaction")
     merchant_id = Column(Integer, ForeignKey('merchant.id'))
     merchant = relationship("Merchant", back_populates="transaction")
-    inserted_at=Column(DateTime, nullable=False)
-    updated_at=Column(DateTime, nullable=False)
+    inserted_at=Column(DateTime)
+    updated_at=Column(DateTime)
 
 
 #################################

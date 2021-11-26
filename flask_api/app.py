@@ -129,6 +129,7 @@ class MerchantResource(Resource):
 api.add_resource(MerchantResource, '/api/v0/merchants/<int:merchant_id>')
 
 class UserListResource(Resource):
+
     def get(self):
         users = User.query.all()
         return users_schema.dump(users)
@@ -150,21 +151,39 @@ class UserResource(Resource):
 
     def get(self, user_id):
         user = User.query.get_or_404(user_id)
-        m = Merchant.query.get_or_404(1)
-        print(m)
         return user_schema.dump(user)
+
+    def delete(self, user_id):
+        user = User.query.get_or_404(user_id)
+        db.session.delete(user)
+        db.session.commit()
+        return '', 204
+
+    def patch(self, user_id):
+        user = User.query.get_or_404(user_id)
+
+        if 'first_name' in request.json:
+            user.first_name = request.json['first_name']
+        if 'last_name' in request.json:
+            user.last_name = request.json['last_name']
+        if 'dob' in request.json:
+            user.dob = request.json['dob']
+        db.session.commit()
+        return merchant_schema.dump(user)
 
 api.add_resource(UserResource, "/api/v0/users/<int:user_id>")
 
 class TransactionListResource(Resource):
 
     def get(self):
+        # transactions = Transactions.query.filter(Transactions.amount.between(500, 900))
         transactions = Transactions.query.all()
         return transactions_schema.dump(transactions)
 
+
 api.add_resource(TransactionListResource, "/api/v0/transactions/")
 
-class TransactionResource(Resource):
+class TransactionPostResource(Resource):
 
     def post(self, user_id, merchant_id):
         merchant = Merchant.query.get(merchant_id)
@@ -180,13 +199,26 @@ class TransactionResource(Resource):
                 debit=request.json['debit'],
                 user_id=user_id,
                 merchant_id=merchant.id,
-                inserted_at  = datetime.now()                )
+                inserted_at  = datetime.now
+                )
 
         db.session.add(new_transaction)
         db.session.commit()
         return transaction_schema.dump(new_transaction)
 
-api.add_resource(TransactionResource, '/api/v0/transactions/users/<int:user_id>/merchants/<int:merchant_id>')
+api.add_resource(TransactionPostResource, '/api/v0/transactions/users/<int:user_id>/merchants/<int:merchant_id>')
+
+class Transactions(Resource):
+
+    def get(self, user_id):
+        transaction  = Transactions.query.get_or_404(user_id)
+        return transaction_schema.dump(transaction)
+
+
+
+
+api.add_resource(Transactions, '/api/v0/transactions/<int:transaction_id>')
+
 
 class UserTransactionList(Resource):
 
