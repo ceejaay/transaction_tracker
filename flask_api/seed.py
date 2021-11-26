@@ -97,21 +97,21 @@ for entry in range (1, 10):
         session.commit()
 
 
-########################################
-# QUERIES
+#########################################
+## QUERIES
 
-# for row in session.query(User, User.first_name).all():
-#     print(row.User, row.first_name)
+## for row in session.query(User, User.first_name).all():
+##     print(row.User, row.first_name)
 
-########################################
+#########################################
 
 
 
-# for i in range(1, 10):
-#     print(i)
-#     user = User(name=fake.name())
-#     session.add(user)
-#     session.commit()
-    # Base.metadata.create_all(engine)
+## for i in range(1, 10):
+##     print(i)
+##     user = User(name=fake.name())
+##     session.add(user)
+##     session.commit()
+#    # Base.metadata.create_all(engine)
 
 
