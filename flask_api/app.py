@@ -99,7 +99,7 @@ class MerchantListResource(Resource):
         db.session.commit()
         return merchant_schema.dump(new_merchant)
 
-api.add_resource(MerchantListResource, '/merchants/')
+api.add_resource(MerchantListResource, '/api/v0/merchants/')
 
 class MerchantResource(Resource):
 
@@ -123,7 +123,7 @@ class MerchantResource(Resource):
         db.session.commit()
         return '', 204
 
-api.add_resource(MerchantResource, '/merchants/<int:merchant_id>')
+api.add_resource(MerchantResource, '/api/v0/merchants/<int:merchant_id>')
 
 class UserListResource(Resource):
     def get(self):
@@ -141,7 +141,7 @@ class UserListResource(Resource):
         db.session.commit()
         return user_schema.dump(new_user)
 
-api.add_resource(UserListResource, '/users/')
+api.add_resource(UserListResource, '/api/v0/users/')
 
 class UserResource(Resource):
 
@@ -151,7 +151,7 @@ class UserResource(Resource):
         print(m)
         return user_schema.dump(user)
 
-api.add_resource(UserResource, "/users/<int:user_id>")
+api.add_resource(UserResource, "/api/v0/users/<int:user_id>")
 
 class TransactionListResource(Resource):
 
@@ -159,7 +159,7 @@ class TransactionListResource(Resource):
         transactions = Transactions.query.all()
         return transactions_schema.dump(transactions)
 
-api.add_resource(TransactionListResource, "/transactions/")
+api.add_resource(TransactionListResource, "/api/v0/transactions/")
 
 class TransactionResource(Resource):
 
@@ -183,7 +183,7 @@ class TransactionResource(Resource):
         db.session.commit()
         return transaction_schema.dump(new_transaction)
 
-api.add_resource(TransactionResource, '/transactions/users/<int:user_id>/merchants/<int:merchant_id>')
+api.add_resource(TransactionResource, '/api/v0/transactions/users/<int:user_id>/merchants/<int:merchant_id>')
 
 class UserTransactionList(Resource):
 
@@ -191,6 +191,6 @@ class UserTransactionList(Resource):
         transactions = Transactions.query.filter_by(user_id=user_id)
         return transactions_schema.dump(transactions)
 
-api.add_resource(UserTransactionList, '/users/<int:user_id>/transactions')
+api.add_resource(UserTransactionList, '/api/v0/users/<int:user_id>/transactions')
 
-app.run()
+# app.run()
