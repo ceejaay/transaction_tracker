@@ -198,6 +198,16 @@ class UserTransactionList(Resource):
         transactions = Transactions.query.filter_by(user_id=user_id)
         return transactions_schema.dump(transactions)
 
-api.add_resource(UserTransactionList, '/api/v0/users/<int:user_id>/transactions')
+api.add_resource(UserTransactionList, '/api/v0/users/<int:user_id>/transactions/')
+
+class MerchantTransactionsList(Resource):
+
+    def get(self, merchant_id):
+        transaction = Transactions.query.filter_by(merchant_id=merchant_id)
+        return transactions_schema.dump(transaction)
+
+
+api.add_resource(MerchantTransactionsList, '/api/v0/merchants/<int:merchant_id>/transactions/')
+
 
 # app.run()
