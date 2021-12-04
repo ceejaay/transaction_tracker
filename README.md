@@ -1,6 +1,9 @@
 # Transaction Tracker
 
-Transaction tracker is a simple api that keeps track of User, Merchants and Transactions. Users and Merchants are independent of one another in this version. Transactions belong to a user and belong to a merchant. With these endpoints you can create, delete, and update Users and Merchants. You can create transactions. Finally you can get a list of transactions by both Merchant and Users.
+Transaction tracker is a simple api that keeps track of User, Merchants and Transactions. Users and Merchants are
+independent of one another in this version. Transactions belong to a user and belong to a merchant. With these endpoints
+you can create, delete, and update Users and Merchants. In this version you can create Transactions with a valid user id
+and a valid merchant id. Finally you can get a list of transactions by both Merchant and Users.
 
 ### Libraries
 * Flask: As a lightweight framework.
