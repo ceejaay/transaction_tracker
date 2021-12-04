@@ -23,16 +23,16 @@ session = Session()
 
 #################################
 
-class Company(Base):
-    __tablename__='company'
-    id = Column(UUID(as_uuid=True), primary_key=True)
-    name = Column(String)
-    available_credit = Column(Integer)
-    credit_line = Column(Integer)
-    inserted_at=Column(DateTime, nullable=False)
-    updated_at=Column(DateTime, nullable=False)
-    user = relationship("Users", back_populates="company", uselist=False)
-    transaction  = relationship("Transactions", back_populates="company", uselist=False)
+# class Company(Base):
+#     __tablename__='company'
+#     id = Column(UUID(as_uuid=True), primary_key=True)
+#     name = Column(String)
+#     available_credit = Column(Integer)
+#     credit_line = Column(Integer)
+#     inserted_at=Column(DateTime, nullable=False)
+#     updated_at=Column(DateTime, nullable=False)
+#     user = relationship("Users", back_populates="company", uselist=False)
+#     transaction  = relationship("Transactions", back_populates="company", uselist=False)
 
 class Users(Base):
     __tablename__ = 'users'
@@ -43,9 +43,8 @@ class Users(Base):
     inserted_at=Column(DateTime, nullable=False)
     updated_at=Column(DateTime, nullable=False)
     transaction = relationship("Transactions", back_populates="users", uselist=False)
-    company_id = Column(UUID(as_uuid=True), ForeignKey('company.id'))
-    company = relationship("Company", back_populates="user")
-
+    # company_id = column(uuid(as_uuid=true), foreignkey('company.id'))
+    # company = relationship("company", back_populates="user")
 
 
 class Merchants(Base):
@@ -70,9 +69,20 @@ class Transactions(Base):
     merchants = relationship("Merchants", back_populates="transaction")
     inserted_at=Column(DateTime, nullable=False)
     updated_at=Column(DateTime, nullable=False)
-    company_id = Column(UUID(as_uuid=True), ForeignKey('company.id'))
-    company = relationship("Company", back_populates="transaction")
+    # company_id = Column(UUID(as_uuid=True), ForeignKey('company.id'))
+    # company = relationship("Company", back_populates="transaction")
 
+user = Users(
+        id=uuid.uuid1(),
+        first_name=faker.first_name(),
+        last_name=faker.last_name(),
+        dob=faker.date_of_birth(),
+        inserted_at=datetime.utcnow().strftime('%Y-%m-%d %H:%m:%S'),
+        updated_at=datetime.utcnow().strftime('%Y-%m-%d %H:%m:%S'),
+        # company_id = c.id
+        )
+session.add(user)
+session.commit()
 
 # c = Company(
 #         id=uuid.uuid1(), 
@@ -82,58 +92,58 @@ class Transactions(Base):
 #         inserted_at=datetime.utcnow().strftime('%Y-%m-%d %H:%m:%S'), 
 #         updated_at=datetime.utcnow().strftime('%Y-%m-%d %H:%m:%S')
 #         )
-for entry in range (1, 10):
+# for entry in range (1, 10):
 
-    c = Company(
-            id=uuid.uuid1(), 
-            name=faker.company(),
-            credit_line=100000,
-            inserted_at=datetime.utcnow().strftime('%Y-%m-%d %H:%m:%S'), 
-            updated_at=datetime.utcnow().strftime('%Y-%m-%d %H:%m:%S')
-            )
-    session.add(c)
-    session.commit()
+#     c = Company(
+#             id=uuid.uuid1(), 
+#             name=faker.company(),
+#             credit_line=100000,
+#             inserted_at=datetime.utcnow().strftime('%Y-%m-%d %H:%m:%S'), 
+#             updated_at=datetime.utcnow().strftime('%Y-%m-%d %H:%m:%S')
+#             )
+#     session.add(c)
+#     session.commit()
 
-    for u in range(1, 20):
-        user = Users(
-                id=uuid.uuid1(),
-                first_name=faker.first_name(),
-                last_name=faker.last_name(),
-                dob=faker.date_of_birth(),
-                inserted_at=datetime.utcnow().strftime('%Y-%m-%d %H:%m:%S'),
-                updated_at=datetime.utcnow().strftime('%Y-%m-%d %H:%m:%S'),
-                company_id = c.id
-                )
-        session.add(user)
-        session.commit()
+    # for u in range(1, 20):
+    #     user = Users(
+    #             id=uuid.uuid1(),
+    #             first_name=faker.first_name(),
+    #             last_name=faker.last_name(),
+    #             dob=faker.date_of_birth(),
+    #             inserted_at=datetime.utcnow().strftime('%Y-%m-%d %H:%m:%S'),
+    #             updated_at=datetime.utcnow().strftime('%Y-%m-%d %H:%m:%S'),
+    #             company_id = c.id
+    #             )
+    #     session.add(user)
+    #     session.commit()
 
-        merch = Merchants(
-                id=uuid.uuid1(),
-                name=faker.company(),
-                description=faker.catch_phrase(),
-                inserted_at=datetime.utcnow().strftime('%Y-%m-%d %H:%m:%S'), 
-                updated_at=datetime.utcnow().strftime('%Y-%m-%d %H:%m:%S')
-                )
+    #     merch = Merchants(
+    #             id=uuid.uuid1(),
+    #             name=faker.company(),
+    #             description=faker.catch_phrase(),
+    #             inserted_at=datetime.utcnow().strftime('%Y-%m-%d %H:%m:%S'), 
+    #             updated_at=datetime.utcnow().strftime('%Y-%m-%d %H:%m:%S')
+    #             )
 
-        session.add(merch)
-        session.commit()
+    #     session.add(merch)
+    #     session.commit()
 
-        for purchase in range(1, 5):
-            purchase = Transactions(
-                    id=uuid.uuid1(),
-                    amount=random.randrange(1, 1000),
-                    credit=False,
-                    debit=True,
-                    description=faker.sentence(nb_words=5),
-                    user_id=user.id,
-                    company_id=c.id,
-                    merchant_id=merch.id,
-                    inserted_at=datetime.utcnow().strftime('%Y-%m-%d %H:%m:%S'), 
-                    updated_at=datetime.utcnow().strftime('%Y-%m-%d %H:%m:%S')
+    #     for purchase in range(1, 5):
+    #         purchase = Transactions(
+    #                 id=uuid.uuid1(),
+    #                 amount=random.randrange(1, 1000),
+    #                 credit=False,
+    #                 debit=True,
+    #                 description=faker.sentence(nb_words=5),
+    #                 user_id=user.id,
+    #                 company_id=c.id,
+    #                 merchant_id=merch.id,
+    #                 inserted_at=datetime.utcnow().strftime('%Y-%m-%d %H:%m:%S'), 
+    #                 updated_at=datetime.utcnow().strftime('%Y-%m-%d %H:%m:%S')
 
-                    )
-            session.add(purchase)
-            session.commit()
+    #                 )
+    #         session.add(purchase)
+    #         session.commit()
 
 
 #########################################
