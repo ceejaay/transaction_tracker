@@ -63,7 +63,7 @@ Transactions have these properties.
     * GET to `/api/v0/merchants/<merchants id>/transactions`
 
 ### Todo
+- Refactor the code structure to break up the App file. For improved readability
 -  Add DELETE function to Transactions.
 - Add PATCH function to Transactions
 - Create a Company model that has a relationship with users and transactions.
-
