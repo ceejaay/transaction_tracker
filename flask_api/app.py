@@ -5,7 +5,7 @@ from flask_restful import Api, Resource
 from datetime import datetime
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///flask_api_test.db'
 db = SQLAlchemy(app)
 api = Api(app)
 ma = Marshmallow(app)

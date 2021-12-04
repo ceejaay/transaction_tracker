@@ -9,7 +9,7 @@ from faker import Faker
 
 
 faker = Faker()
-DATABASE_URI = 'sqlite:///test.db'
+DATABASE_URI = 'sqlite:///flask_api_test.db'
 Base = declarative_base()
 
 engine = create_engine(DATABASE_URI, echo=True)
