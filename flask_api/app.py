@@ -165,6 +165,34 @@ class TransactionListResource(Resource):
 
 api.add_resource(TransactionListResource, "/api/v0/transactions/")
 
+class TransactionSingleResource(Resource):
+    def get(self, transaction_id):
+        transaction  = Transactions.query.get_or_404(transaction_id)
+        return transaction_schema.dump(transaction)
+
+    def delete(self, transaction_id):
+        transaction = Transactions.query.get_or_404(transaction_id)
+        db.session.delete(transaction)
+        db.session.commit()
+        return '', 204
+
+    def patch(self, transaction_id):
+        transaction = Transactions.query.get_or_404(transaction_id)
+
+        if 'description' in request.json:
+            transaction.description = request.json['description']
+        if 'credit' in request.json:
+            transaction.credit = request.json['credit']
+        if 'debit' in request.json:
+            transaction.debit = request.json['debit']
+        if 'amount' in request.json:
+            transaction.amount = request.json['amount']
+        db.session.commit()
+        return transaction_schema.dump(transaction)
+
+
+api.add_resource(TransactionSingleResource, '/api/v0/transactions/<int:transaction_id>/')
+
 class TransactionResource(Resource):
 
     def post(self, user_id, merchant_id):
