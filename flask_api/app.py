@@ -153,7 +153,6 @@ class UserResource(Resource):
     def get(self, user_id):
         user = User.query.get_or_404(user_id)
         m = Merchant.query.get_or_404(1)
-        print(m)
         return user_schema.dump(user)
 
 api.add_resource(UserResource, "/api/v0/users/<int:user_id>")
