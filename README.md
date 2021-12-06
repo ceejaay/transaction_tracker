@@ -1,4 +1,5 @@
 # Transaction Tracker
+### Chad Jemmett's project submission as application to a Backend Dev position at Divvy.
 
 Transaction tracker is a simple api that keeps track of User, Merchants and Transactions. Users and Merchants are
 independent of one another in this version. Transactions belong to a user and belong to a merchant. With these endpoints
