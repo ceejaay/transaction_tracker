@@ -56,7 +56,12 @@ Transactions have these properties.
 ### Trnsaction endpoints 
 1. Create a transaction 
     * POST to `/api/v0/transactions/users/< user id>/merchants/<merchant id>`
-
+2. Get a single a transaction 
+    * GET to `/api/v0/transactions/<transaction id>/`
+3. Update a transaction
+    * PATCH to `/api/v0/transactions/<transaction id>/`
+4. Delete a transaction
+    * DELETE to `/api/v0/transactions/<transaction id>/`
 
 ### Transactions by Merchant or User
 
@@ -67,6 +72,6 @@ Transactions have these properties.
 
 ### Todo
 - Refactor the code structure to break up the App file. For improved readability
--  Add DELETE function to Transactions.
-- Add PATCH function to Transactions
+X  Add DELETE function to Transactions.
+X Add PATCH function to Transactions
 - Create a Company model that has a relationship with users and transactions.
